@@ -4,3 +4,7 @@ WiiWikiPaint
 To build
 
 Run ./jaks.sh
+
+To build on windows:
+- Install Git
+- Clone Repo
