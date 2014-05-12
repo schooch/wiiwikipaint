@@ -12,7 +12,21 @@
     files.include('**/*.js');
     files.exclude('node_modules');
 
-    lint.validateFileList(files.toArray(), nodeLintOptions(), {});
+    var passed = lint.validateFileList(files.toArray(), nodeLintOptions(), {});
+    if(!passed) fail('Lint failed');
+  });
+
+  desc('integrate');
+  task('integrate', ['default'], function(){
+    console.log('1. Make sure git status is clean');
+    console.log('2. Build on the integration box');
+    console.log(' a. Walk over to integration box');
+    console.log(' b. git pull');
+    console.log(' c. jake');
+    console.log(' d. if jake fails, stop! Try again');
+    console.log('3. git checkout integration');
+    console.log('4. git merge --noff --log');
+    console.log('5. git checkout master');
   });
 
   desc('Integrate');
