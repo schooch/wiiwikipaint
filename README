@@ -6,5 +6,8 @@ To build
 Run ./jaks.sh
 
 To build on windows:
+- Install nodejs
 - Install Git
 - Clone Repo
+- add jake.bat file (node node_modules\jake\bin\cli.js)
+
