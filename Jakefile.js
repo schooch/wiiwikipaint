@@ -2,6 +2,7 @@
   /*global desc, task, jake, fail, complete */
   "use strict";
 
+  desc('Build and test');
   task('default', ['lint', 'test']);
 
   desc('lint everything');
@@ -33,7 +34,7 @@
   task('test', [], function(){
     console.log('test everything');
     var reporter = require('nodeunit').reporters['default'];
-    reporter.run(['test']);
+    reporter.run(['src/server/_server_test.js']);
   });
 
   function nodeLintOptions(){
