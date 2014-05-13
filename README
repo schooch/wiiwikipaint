@@ -10,5 +10,9 @@ To build on windows:
 - Clone Repo
 
 To do current task
-- Chose framework
-- Abstract it
+
+- Make lint fail when tests fail
+
+Future ideas
+
+- Abstract test framework

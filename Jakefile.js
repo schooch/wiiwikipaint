@@ -34,8 +34,14 @@
   task('test', [], function(){
     console.log('test everything');
     var reporter = require('nodeunit').reporters['default'];
-    reporter.run(['src/server/_server_test.js']);
-  });
+    reporter.run(['src/server/_server_test.js'], null, function(failures){
+      if(failures){
+        fail('tests failed');
+      }else{
+        complete();
+      }
+    });
+  }, {async: true});
 
   function nodeLintOptions(){
     return {
