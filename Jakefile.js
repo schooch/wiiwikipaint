@@ -2,7 +2,8 @@
   /*global desc, task, jake, fail, complete */
   "use strict";
 
-  task('default', ['lint']);
+  desc('Build and test');
+  task('default', ['lint', 'test']);
 
   desc('lint everything');
   task('lint', [], function() {
@@ -29,6 +30,7 @@
     console.log('5. git checkout master');
   });
 
+<<<<<<< HEAD
   desc('Integrate');
   task('Integrate', ['default'], function(){
     console.log('1. Make sure git status is clean');
@@ -40,6 +42,20 @@
     console.log('4. git merge --noff --log');
     console.log('5. git checkout master');
   });
+=======
+  desc('Test everything');
+  task('test', [], function(){
+    console.log('test everything');
+    var reporter = require('nodeunit').reporters['default'];
+    reporter.run(['src/server/_server_test.js'], null, function(failures){
+      if(failures){
+        fail('tests failed');
+      }else{
+        complete();
+      }
+    });
+  }, {async: true});
+>>>>>>> master
 
   function nodeLintOptions(){
     return {

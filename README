@@ -9,5 +9,16 @@ To build on windows:
 - Install nodejs
 - Install Git
 - Clone Repo
+<<<<<<< HEAD
 - add jake.bat file (node node_modules\jake\bin\cli.js)
 
+=======
+
+To do current task
+
+- Make lint fail when tests fail
+
+Future ideas
+
+- Abstract test framework
+>>>>>>> master
