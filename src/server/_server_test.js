@@ -4,16 +4,6 @@
 var server = require('./server.js');
 var http = require('http');
 
-exports.tearDown = function(done){
-  server.stop(function(){
-    done();
-  });
-};
-
-exports.setUp = function(done){
-  server.start(8080);
-}
-
 // exports.test_serverRespondsToGetRequests = function(test){
 //   server.start();
 
@@ -24,6 +14,8 @@ exports.setUp = function(done){
 // };
 
 exports.test_serverReturnesHelloWorld = function(test){
+  server.start(8080);
+
   var request = http.get('http://localhost:8080');
   request.on('response', function(response){
     var receivedData = false;
@@ -37,12 +29,32 @@ exports.test_serverReturnesHelloWorld = function(test){
     });
     response.on('end', function(){
       test.ok(receivedData, 'Should have received data');
-      test.done();
+      server.stop(function(){
+        test.done();
+      });
     });
     
   });
 };
 
-export.text_serverRunsCallbackWhenStopCompletes = function(){
-  server.stop();
+exports.text_serverRquiresPortNumber = function(test){
+  test.throws(function(){
+    server.start();
+  });
+  test.done();
+};
+
+exports.text_serverRunsCallbackWhenStopCompletes = function(test){
+  server.start(8080);
+  server.stop(function(){
+    test.done();
+  });
+};
+
+
+exports.test_stopCalledWhenServerIsntRunning = function(test){
+  test.throws(function(){
+    server.stop();
+  });
+  test.done();
 };
