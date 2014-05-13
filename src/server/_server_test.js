@@ -10,21 +10,32 @@ exports.tearDown = function(done){
   });
 };
 
-exports.test_serverRespondsToGetRequests = function(test){
-  server.start();
+// exports.test_serverRespondsToGetRequests = function(test){
+//   server.start();
 
-  http.get('http://localhost:8080', function(response){
-    response.on('data', function(){});
-    test.done();
-  });  
-};
+//   http.get('http://localhost:8080', function(response){
+//     response.on('data', function(){});
+//     test.done();
+//   });  
+// };
 
 exports.test_serverReturnesHelloWorld = function(test){
   server.start(); // TODO remove duplocation
   var request = http.get('http://localhost:8080');
   request.on('response', function(response){
-    response.on('data', function(){});
+    var receivedData = false;
+    response.setEncoding('utf8');
+
     test.equal(response.statusCode, 200, 'Status code 200');
-    test.done();
+
+    response.on('data', function(chunk){
+      receivedData = true;
+      test.equal('Hello World', chunk, 'Check response is "Hello World"');
+    });
+    response.on('end', function(){
+      test.ok(receivedData, 'Should have received data');
+      test.done();
+    });
+    
   });
 };
