@@ -32,6 +32,8 @@
   desc('Test everything');
   task('test', [], function(){
     console.log('test everything');
+    var reporter = require('nodeunit').reporters['default'];
+    reporter.run(['test']);
   });
 
   function nodeLintOptions(){
