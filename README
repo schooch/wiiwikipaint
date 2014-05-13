@@ -10,8 +10,9 @@ To build on windows:
 - Clone Repo
 
 To do current task
+- Create a very simple HTTP server
+- Modify build script to enforce version
 
-- Make lint fail when tests fail
 
 Future ideas
 
