@@ -8,3 +8,7 @@ Run ./jaks.sh
 To build on windows:
 - Install Git
 - Clone Repo
+
+To do current task
+- Chose framework
+- Abstract it

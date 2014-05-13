@@ -2,7 +2,7 @@
   /*global desc, task, jake, fail, complete */
   "use strict";
 
-  task('default', ['lint']);
+  task('default', ['lint', 'test']);
 
   desc('lint everything');
   task('lint', [], function() {
@@ -27,6 +27,11 @@
     console.log('3. git checkout integration');
     console.log('4. git merge --noff --log');
     console.log('5. git checkout master');
+  });
+
+  desc('Test everything');
+  task('test', [], function(){
+    console.log('test everything');
   });
 
   function nodeLintOptions(){
