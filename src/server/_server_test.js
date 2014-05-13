@@ -10,6 +10,10 @@ exports.tearDown = function(done){
   });
 };
 
+exports.setUp = function(done){
+  server.start(8080);
+}
+
 // exports.test_serverRespondsToGetRequests = function(test){
 //   server.start();
 
@@ -20,7 +24,6 @@ exports.tearDown = function(done){
 // };
 
 exports.test_serverReturnesHelloWorld = function(test){
-  server.start(); // TODO remove duplocation
   var request = http.get('http://localhost:8080');
   request.on('response', function(response){
     var receivedData = false;
@@ -38,4 +41,8 @@ exports.test_serverReturnesHelloWorld = function(test){
     });
     
   });
+};
+
+export.text_serverRunsCallbackWhenStopCompletes = function(){
+  server.stop();
 };
