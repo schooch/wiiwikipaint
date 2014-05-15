@@ -37,6 +37,10 @@ exports.test_serverReturnesHelloWorld = function(test){
   });
 };
 
+exports.test_serverServesAFile = function(){
+  // TODO
+};
+
 exports.text_serverRquiresPortNumber = function(test){
   test.throws(function(){
     server.start();

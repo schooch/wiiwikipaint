@@ -1,6 +1,5 @@
 WiiWikiPaint
 
-
 To build
 
 Run ./jaks.sh
@@ -16,4 +15,5 @@ To do current task
 
 Future ideas
 
+- add package json
 - Abstract test framework
