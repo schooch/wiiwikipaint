@@ -4,6 +4,9 @@
 var server = require('./server.js');
 var http = require('http');
 var fs = require('fs');
+var assert = require('assert');
+
+var TEST_FILE = 'generated/test/test.html';
 // exports.test_serverRespondsToGetRequests = function(test){
 //   server.start();
 
@@ -13,8 +16,46 @@ var fs = require('fs');
 //   });  
 // };
 
-exports.test_serverReturnesHelloWorld = function(test){
-  server.start(8080);
+// exports.test_serverReturnesHelloWorld = function(test){
+//   server.start(8080);
+
+//   var request = http.get('http://localhost:8080');
+//   request.on('response', function(response){
+//     var receivedData = false;
+//     response.setEncoding('utf8');
+
+//     test.equal(response.statusCode, 200, 'Status code 200');
+
+//     response.on('data', function(chunk){
+//       receivedData = true;
+//       test.equal('Hello World', chunk, 'Check response is "Hello World"');
+//     });
+//     response.on('end', function(){
+//       test.ok(receivedData, 'Should have received data');
+//       server.stop(function(){
+//         test.done();
+//       });
+//     });
+    
+//   });
+// };
+
+
+exports.tearDown = function(done){
+  if(fs.existsSync(TEST_FILE)){
+    fs.unlinkSync(TEST_FILE);
+    assert.ok(!fs.existsSync(TEST_FILE), 'Could not delete file [' + TEST_FILE + ']');
+  }
+
+  done();
+};
+
+exports.test_serverServesAFile = function(test){
+  var testData = 'This is served from a file';
+
+  fs.writeFileSync(TEST_FILE, testData);
+
+  server.start(TEST_FILE, 8080);
 
   var request = http.get('http://localhost:8080');
   request.on('response', function(response){
@@ -25,42 +66,34 @@ exports.test_serverReturnesHelloWorld = function(test){
 
     response.on('data', function(chunk){
       receivedData = true;
-      test.equal('Hello World', chunk, 'Check response is "Hello World"');
+      test.equal(testData, chunk, 'Check response is ' + testData);
     });
+
     response.on('end', function(){
       test.ok(receivedData, 'Should have received data');
       server.stop(function(){
         test.done();
       });
     });
-    
   });
 };
 
-exports.test_serverServesAFile = function(test){
-  var testDir = 'generated/test';
-  var testFile = testDir + '/test.html';
-
-  try{
-    fs.writeFileSync(testFile, 'hello world');
-    test.ok(false, "failed");
-  }
-  finally{
-    fs.unlinkSync(testFile);
-    test.ok(!fs.existsSync(testFile), 'File should\'t exist');
-    test.done();
-  }
-};
-
-exports.text_serverRquiresPortNumber = function(test){
+exports.test_serverRequiresFileToServe = function(test){
   test.throws(function(){
     server.start();
   });
   test.done();
 };
 
+exports.text_serverRequiresPortNumber = function(test){
+  test.throws(function(){
+    server.start(TEST_FILE);
+  });
+  test.done();
+};
+
 exports.text_serverRunsCallbackWhenStopCompletes = function(test){
-  server.start(8080);
+  server.start(TEST_FILE, 8080);
   server.stop(function(){
     test.done();
   });
