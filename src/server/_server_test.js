@@ -3,7 +3,7 @@
 
 var server = require('./server.js');
 var http = require('http');
-
+var fs = require('fs');
 // exports.test_serverRespondsToGetRequests = function(test){
 //   server.start();
 
@@ -38,8 +38,17 @@ exports.test_serverReturnesHelloWorld = function(test){
 };
 
 exports.test_serverServesAFile = function(test){
-  // TODO
-  test.done();
+  var testDir = 'generated/test';
+  var testFile = testDir + '/test.html';
+
+  try{
+    fs.writeFileSync(testFile, 'hello world');
+    test.done();
+  }
+  finally{
+    fs.unlinkSync(testFile);
+    test.ok(!fs.existsSync(testFile), 'File should\'t exist');
+  }
 };
 
 exports.text_serverRquiresPortNumber = function(test){

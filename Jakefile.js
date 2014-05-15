@@ -1,6 +1,22 @@
 (function() {
-  /*global desc, task, jake, fail, complete */
+  /*global desc, task, jake, fail, complete, directory */
   "use strict";
+
+  var mkdirp = require('mkdirp').mkdirp;
+
+  var NODE_VERSION = 'v0.10.26\n';
+  var GENERATED_DIR = 'generated';
+  var TEMP_TESTFILE_DIR = GENERATED_DIR + '/test';
+
+  // Create temporary dir
+  mkdirp.sync(TEMP_TESTFILE_DIR, '0755', function (err) {
+      if (err) console.error('There was a problem creating: ' + TEMP_TESTFILE_DIR + ' ' + err);
+  });
+
+  desc('Delete all generated files');
+  task('clean', [], function(){
+   jake.rmRf(GENERATED_DIR);
+  });
 
   desc('Build and test');
   task('default', ['lint', 'test']);
@@ -46,8 +62,6 @@
 
   // desc('ensure correct version of node is present');
   task('node', [], function(){
-    var NODE_VERSION = 'v0.10.26\n';
-
     sh('node --version', function(stdout){
         if(stdout !== NODE_VERSION) fail('Incorrect node version. Expected: '+ NODE_VERSION);
         complete();
