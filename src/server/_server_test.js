@@ -37,8 +37,9 @@ exports.test_serverReturnesHelloWorld = function(test){
   });
 };
 
-exports.test_serverServesAFile = function(){
+exports.test_serverServesAFile = function(test){
   // TODO
+  test.done();
 };
 
 exports.text_serverRquiresPortNumber = function(test){
