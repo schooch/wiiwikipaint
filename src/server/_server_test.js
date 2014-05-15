@@ -43,11 +43,12 @@ exports.test_serverServesAFile = function(test){
 
   try{
     fs.writeFileSync(testFile, 'hello world');
-    test.done();
+    test.ok(false, "failed");
   }
   finally{
     fs.unlinkSync(testFile);
     test.ok(!fs.existsSync(testFile), 'File should\'t exist');
+    test.done();
   }
 };
 
