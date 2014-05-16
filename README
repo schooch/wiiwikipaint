@@ -2,18 +2,18 @@ WiiWikiPaint
 
 To build
 
-Run ./jaks.sh
+Run ./jake.sh
 
 To build on windows:
 - Install Git
 - Clone Repo
 
 To do current task
-- Create a very simple HTTP server
-- Modify build script to enforce version
+* Exploratory testing
 
 
 Future ideas
-
+- Throw errors properly
+- Custom 404
 - add package json
 - Abstract test framework
