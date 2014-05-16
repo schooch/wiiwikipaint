@@ -17,6 +17,22 @@
     if(!passed) fail('Lint failed');
   });
 
+  desc('Test everything');
+  task('test', [], function(){
+    var files = new jake.FileList();
+    files.include('**/_*_test.js');
+    files.exclude('node_modules');
+
+    var reporter = require('nodeunit').reporters['default'];
+    reporter.run(files.toArray(), null, function(failures){
+      if(failures){
+        fail('tests failed');
+      }else{
+        complete();
+      }
+    });
+  }, {async: true});
+
   desc('integrate');
   task('integrate', ['default'], function(){
     console.log('1. Make sure git status is clean');
