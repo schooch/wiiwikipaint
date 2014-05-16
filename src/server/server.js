@@ -6,7 +6,7 @@
   var fs = require('fs');
   var server;
 
-  exports.start = function(homePage, errorPage, portNumber){
+  exports.start = function(homePage, errorPage, portNumber, callback){
     if(!portNumber){throw new Error(['No port number defined']);}
     if(!errorPage){throw new Error(['No 404 page defined']);}
 
@@ -23,6 +23,8 @@
     });
 
     server.listen(portNumber);
+
+    callback();
   };
 
   function serverFile(response, file){

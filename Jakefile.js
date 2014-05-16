@@ -1,22 +1,6 @@
 (function() {
-  /*global desc, task, jake, fail, complete, directory */
+  /*global desc, task, jake, fail, complete */
   "use strict";
-
-  var mkdirp = require('mkdirp').mkdirp;
-
-  var NODE_VERSION = 'v0.10.26\n';
-  var GENERATED_DIR = 'generated';
-  var TEMP_TESTFILE_DIR = GENERATED_DIR + '/test';
-
-  // Create temporary dir
-  mkdirp.sync(TEMP_TESTFILE_DIR, '0755', function (err) {
-      if (err) console.error('There was a problem creating: ' + TEMP_TESTFILE_DIR + ' ' + err);
-  });
-
-  desc('Delete all generated files');
-  task('clean', [], function(){
-   jake.rmRf(GENERATED_DIR);
-  });
 
   desc('Build and test');
   task('default', ['lint', 'test']);
@@ -28,11 +12,26 @@
     var files = new jake.FileList();
     files.include('**/*.js');
     files.exclude('node_modules');
-    //files.exclude('spikes');
 
     var passed = lint.validateFileList(files.toArray(), nodeLintOptions(), {});
     if(!passed) fail('Lint failed');
   });
+
+  desc('Test everything');
+  task('test', [], function(){
+    var files = new jake.FileList();
+    files.include('**/_*_test.js');
+    files.exclude('node_modules');
+
+    var reporter = require('nodeunit').reporters['default'];
+    reporter.run(files.toArray(), null, function(failures){
+      if(failures){
+        fail('tests failed');
+      }else{
+        complete();
+      }
+    });
+  }, {async: true});
 
   desc('integrate');
   task('integrate', ['default'], function(){
@@ -46,43 +45,6 @@
     console.log('4. git merge --noff --log');
     console.log('5. git checkout master');
   });
-
-  desc('Test everything');
-  task('test', [], function(){
-    console.log('test everything');
-    var reporter = require('nodeunit').reporters['default'];
-    reporter.run(['src/server/_server_test.js'], null, function(failures){
-      if(failures){
-        fail('tests failed');
-      }else{
-        complete();
-      }
-    });
-  }, {async: true});
-
-  // desc('ensure correct version of node is present');
-  task('node', [], function(){
-    sh('node --version', function(stdout){
-        if(stdout !== NODE_VERSION) fail('Incorrect node version. Expected: '+ NODE_VERSION);
-        complete();
-    });
-  }, {async: true});
-
-  function sh(command, callback){
-    console.log('> ' + command);
-
-    var stdout = '';
-    var process = jake.createExec(command, {printStdout: true, printStderr: true});
-    process.on('stdout', function(chunk){
-      stdout += chunk;
-    });
-    process.on('cmdEnd', function(){
-      callback(stdout);
-    });
-    
-    process.run();
-
-  }
 
   function nodeLintOptions(){
     return {

@@ -15,7 +15,6 @@
     cleanUpFile(TEST_HOME_PAGE);
     cleanUpFile(TEST_404_PAGE);
     done();
-
   };
 
   exports.test_serverServesHomepage = function(test){
@@ -68,9 +67,10 @@
   };
 
   exports.text_serverRunsCallbackWhenStopCompletes = function(test){
-    server.start(TEST_HOME_PAGE, TEST_404_PAGE, 8080);
-    server.stop(function(){
-      test.done();
+    server.start(TEST_HOME_PAGE, TEST_404_PAGE, 8080, function(){
+      server.stop(function(){
+        test.done();
+      });
     });
   };
 
@@ -85,20 +85,21 @@
   // Helper functions
 
   function httpGet(url, callback){
-    server.start(TEST_HOME_PAGE, TEST_404_PAGE, 8080);
+    server.start(TEST_HOME_PAGE, TEST_404_PAGE, 8080, function(){
+      var request = http.get(url);
 
-    var request = http.get(url);
-    request.on('response', function(response){
-      var receivedData = '';
-      response.setEncoding('utf8');
+      request.on('response', function(response){
+        var receivedData = '';
+        response.setEncoding('utf8');
 
-      response.on('data', function(chunk){
-        receivedData += chunk;
-      });
+        response.on('data', function(chunk){
+          receivedData += chunk;
+        });
 
-      response.on('end', function(){
-        server.stop(function(){
-          callback(response, receivedData);
+        response.on('end', function(){
+          server.stop(function(){
+            callback(response, receivedData);
+          });
         });
       });
     });
