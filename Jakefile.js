@@ -30,19 +30,6 @@
     console.log('5. git checkout master');
   });
 
-<<<<<<< HEAD
-  desc('Integrate');
-  task('Integrate', ['default'], function(){
-    console.log('1. Make sure git status is clean');
-    console.log('2. Build on the integration box');
-    console.log(' a. Walk over to integration box');
-    console.log(' b. git pull');
-    console.log(' c. jake');
-    console.log('3. git checkout integration');
-    console.log('4. git merge --noff --log');
-    console.log('5. git checkout master');
-  });
-=======
   desc('Test everything');
   task('test', [], function(){
     console.log('test everything');
@@ -55,7 +42,6 @@
       }
     });
   }, {async: true});
->>>>>>> master
 
   function nodeLintOptions(){
     return {
