@@ -24,10 +24,18 @@
     child.kill();
   };
 
-  exports.test_forSmoke = function(test){
+  exports.test_canGetHomePage = function(test){
     httpGet('http://localhost:8080', function(response, receivedData){
       var foundHomePage = receivedData.indexOf('wiiwikipaint home page') !== 1;
       test.ok(foundHomePage, 'Home page should have contained wiiwikipaint marker');
+      test.done();
+    });
+  };
+
+  exports.test_canGet404Page = function(test){
+     httpGet('http://localhost:8080/nonexistantpage', function(response, receivedData){
+      var foundHomePage = receivedData.indexOf('wiiwikipaint 404 page') !== 1;
+      test.ok(foundHomePage, 'Home page should contain 404 marker');
       test.done();
     });
   };
