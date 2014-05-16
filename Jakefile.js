@@ -42,7 +42,7 @@
     console.log(' c. jake');
     console.log(' d. if jake fails, stop! Try again');
     console.log('3. git checkout integration');
-    console.log('4. git merge --noff --log');
+    console.log('4. git merge master --no-ff --log');
     console.log('5. git checkout master');
   });
 
