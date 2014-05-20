@@ -21,6 +21,7 @@
   task('test', [], function(){
     var files = new jake.FileList();
     files.include('**/_*_test.js');
+    files.exclude('_release_test.js');
     files.exclude('node_modules');
 
     var reporter = require('nodeunit').reporters['default'];
@@ -44,6 +45,13 @@
     console.log('3. git checkout integration');
     console.log('4. git merge master --no-ff --log');
     console.log('5. git checkout master');
+  });
+
+  desc('deploy to Heroku');
+  task('deploy', ['default'], function(){
+    console.log('1. Make sure git status is clean');
+    console.log('2. git push heroku master');
+    console.log('3. jake release test');
   });
 
   function nodeLintOptions(){
