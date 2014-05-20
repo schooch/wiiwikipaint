@@ -1,8 +1,13 @@
+/*global desc, task, jake, fail, complete, chai, describe, it */
 
-var assert = chai.assert;
+(function(){
+  "use strict";
 
-describe('Nothing', function(){
-  it('should run', function(){
-    assert.equal('foo', 'foo');
+  var assert = chai.assert;
+
+  describe('Nothing', function(){
+    it('should run', function(){
+      assert.equal('foo', 'foo');
+    });
   });
-});
+}());

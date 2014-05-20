@@ -12,17 +12,21 @@
     var files = new jake.FileList();
     files.include('**/*.js');
     files.exclude('node_modules');
+    files.exclude('karma.conf.js');
 
     var passed = lint.validateFileList(files.toArray(), nodeLintOptions(), {});
     if(!passed) fail('Lint failed');
   });
 
   desc('Test everything');
-  task('test', [], function(){
+  task('test', ['testServer', 'testClient']);
+
+  desc('Test server code');
+  task('testServer', [], function(){
     var files = new jake.FileList();
     files.include('**/_*_test.js');
-    files.exclude('src/client/*_*test.js');
     files.exclude('_release_test.js');
+    files.exclude('./src/client/*_*test.js');
     files.exclude('node_modules');
 
     var reporter = require('nodeunit').reporters['default'];
@@ -33,6 +37,11 @@
         complete();
       }
     });
+  }, {async: true});
+
+  desc('Test client code');
+  task('testClient', [], function(){
+    console.log('client side code here');
   }, {async: true});
 
   desc('integrate');
