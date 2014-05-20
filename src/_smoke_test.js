@@ -11,6 +11,7 @@
   var jake = require('jake');
   var child_process = require('child_process');
   var http = require('http');
+  var fs = require('fs');
   var child;
 
   exports.setUp = function(done){
@@ -25,7 +26,7 @@
   };
 
   exports.test_canGetHomePage = function(test){
-    httpGet('http://localhost:8080', function(response, receivedData){
+    httpGet('http://localhost:5000', function(response, receivedData){
       var foundHomePage = receivedData.indexOf('wiiwikipaint home page') !== 1;
       test.ok(foundHomePage, 'Home page should have contained wiiwikipaint marker');
       test.done();
@@ -33,7 +34,7 @@
   };
 
   exports.test_canGet404Page = function(test){
-     httpGet('http://localhost:8080/nonexistantpage', function(response, receivedData){
+     httpGet('http://localhost:5000/nonexistantpage', function(response, receivedData){
       var foundHomePage = receivedData.indexOf('wiiwikipaint 404 page') !== 1;
       test.ok(foundHomePage, 'Home page should contain 404 marker');
       test.done();
@@ -41,11 +42,21 @@
   };
 
   function runServer(callback){
-    child = child_process.spawn('node', ['src/server/wiiwikipaint', '8080']);
+    var webCommand = parseProcfile();
+
+    child = child_process.spawn(webCommand.command, webCommand.options);
     child.stdout.setEncoding('utf8');
     child.stdout.on('data', function(chunk){
       if(chunk.trim() === 'Server started') callback();
     });
+  }
+
+  function parseProcfile(){
+    var procfile = require('procfile');
+    var file = fs.readFileSync('Procfile', 'utf8');
+    var parsed = procfile.parse(file);
+    
+    return parsed.web;
   }
 
   function httpGet(url, callback){

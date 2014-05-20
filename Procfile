@@ -1,0 +1,1 @@
+web: node src/server/wiiwikipaint.js 5000
