@@ -21,6 +21,7 @@
   task('test', [], function(){
     var files = new jake.FileList();
     files.include('**/_*_test.js');
+    files.exclude('src/client/*_*test.js');
     files.exclude('_release_test.js');
     files.exclude('node_modules');
 
