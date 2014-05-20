@@ -1,1 +1,1 @@
-web: node src/server/wiiwikipaint.js 5000
+web: node src/server/wiiwikipaint.js $PORT

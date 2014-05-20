@@ -42,9 +42,9 @@
   };
 
   function runServer(callback){
-    var webCommand = parseProcfile();
+    var commandLine = parseProcfile();
 
-    child = child_process.spawn(webCommand.command, webCommand.options);
+    child = child_process.spawn(commandLine.command, commandLine.options);
     child.stdout.setEncoding('utf8');
     child.stdout.on('data', function(chunk){
       if(chunk.trim() === 'Server started') callback();
@@ -54,9 +54,14 @@
   function parseProcfile(){
     var procfile = require('procfile');
     var file = fs.readFileSync('Procfile', 'utf8');
-    var parsed = procfile.parse(file);
-    
-    return parsed.web;
+    var parsed = procfile.parse(file).web;
+
+    parsed.options = parsed.options.map(function(element){
+      if (element === '$PORT') return '5000';
+      else return element;
+    });
+
+    return parsed;
   }
 
   function httpGet(url, callback){
