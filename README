@@ -1,19 +1,24 @@
 WiiWikiPaint
 
+
 To build
 
-Run ./jake.sh
+Run ./jaks.sh
 
 To build on windows:
+- Install nodejs
 - Install Git
 - Clone Repo
+<<<<<<< HEAD
+- add jake.bat file (node node_modules\jake\bin\cli.js)
+
+=======
 
 To do current task
-* Exploratory testing
 
+- Make lint fail when tests fail
 
 Future ideas
-- Throw errors properly
-- Custom 404
-- add package json
+
 - Abstract test framework
+>>>>>>> master
