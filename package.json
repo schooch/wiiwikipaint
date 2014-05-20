@@ -1,6 +1,9 @@
 {
-	'engines':{
-		'node':'0.10.26',
-		'npm': '1.4.5'
+  "name": "wiiwikipaint",
+  "version": "0.0.1",
+  
+	"engines":{
+		"node": "0.10.26",
+		"npm": "1.4.5"
 	}
 }
