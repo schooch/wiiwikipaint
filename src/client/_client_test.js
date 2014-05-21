@@ -44,19 +44,20 @@
       var paper = wwp.inializeDrawingArea(div[0], width, height);
       expect(paper.width).to.equal(width);
       expect(paper.height).to.equal(height);
+    });
 
-      // verify initialized corretly
-      // var tagName = $(div).children()[0].tagName;
+    it('should draw a line', function(){
+      var div = $(drawingAreaDiv);
+      $(document.body).append(div);
 
-      // dump(tagName);
+      wwp.drawLine(20,30,30,200);
 
-      // if(tagName === 'svg'){
-      //   // Browser support svg
-      //   expect(tagName).to.equal('svg');
-      // }else{
-      //   // Browser doesn't support svg (<=IE8)
-      //   expect(tagName).to.equal('DIV');
-      // }
+      var totalElements = 0;
+      paper.forEach(functino(element){
+        totalElements++;
+      });
+      expect(totalElements = 1);
+
     });
   });
 }());
