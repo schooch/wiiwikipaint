@@ -8,7 +8,7 @@
   var reporter = require('nodeunit').reporters['default'];
 
   var REQUIRED_BROWSERS = [
-    "IE 8.0.0 (Windows 7)",
+    //"IE 8.0.0 (Windows 7)",
     "IE 8.0.0 (Windows Vista)",
     "Firefox 27.0.0 (Mac OS X 10.9)",
     "Chrome 34.0.1847 (Mac OS X 10.9.2)",

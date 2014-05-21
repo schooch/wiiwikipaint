@@ -50,13 +50,25 @@
       var div = $(drawingAreaDiv);
       $(document.body).append(div);
 
-      wwp.drawLine(20,30,30,200);
+      var paper = wwp.inializeDrawingArea(div[0]);
 
-      var totalElements = 0;
-      paper.forEach(functino(element){
-        totalElements++;
+      var elements = [];
+
+      var startX = 20;
+      var startY = 30;
+      var finishX = 30;
+      var finishY = 300;
+      wwp.drawLine(startX,startY,finishX,finishY);
+
+      paper.forEach(function(element){
+        elements.push(element);
       });
-      expect(totalElements = 1);
+      expect(elements.length).to.equal(1);
+
+      var element = elements[0];
+      var path = element.node.attributes.d.value;
+
+      expect(path).to.equal('M'+startX+','+startY+'L'+finishX+','+finishY);
 
     });
   });
