@@ -7,6 +7,7 @@
   var height = 200;
   var paperId = 'wwp-drawing-area';
   var drawingAreaDiv = '<div id="' +paperId+ '"></div>';
+  var type;
 
   describe('Drawing area', function(){
     it('should be initialized in pre-defined div', function(){
@@ -18,7 +19,7 @@
       wwp.inializeDrawingArea(div[0]);
 
       var tagName = $(div).children()[0].tagName.toLowerCase();
-      var type = Raphael.type.toLowerCase();
+      type = Raphael.type.toLowerCase();
 
       // verify initialized corretly
       if(type === 'svg'){
@@ -51,25 +52,29 @@
       $(document.body).append(div);
 
       var paper = wwp.inializeDrawingArea(div[0]);
-
-      var elements = [];
-
       var startX = 20;
       var startY = 30;
       var finishX = 30;
       var finishY = 300;
+      var elements = 0;
+
       wwp.drawLine(startX,startY,finishX,finishY);
 
       paper.forEach(function(element){
-        elements.push(element);
+        var type = Raphael.type.toLowerCase();
+        var actualPath = element.attr().path;
+        var expectedPath = 'M'+startX+','+startY+'L'+finishX+','+finishY;
+
+        if(type === 'svg'){
+          // Browser support svg
+          expect($.trim(actualPath)).to.equal(expectedPath);
+        }else if(type === 'vml'){
+          // Browser doesn't support svg (<=IE8)
+          expect(actualPath).to.equal(expectedPath);
+        }else{
+          throw new Error('Browser does not return expected path string');
+        }
       });
-      expect(elements.length).to.equal(1);
-
-      var element = elements[0];
-      var path = element.node.attributes.d.value;
-
-      expect(path).to.equal('M'+startX+','+startY+'L'+finishX+','+finishY);
-
     });
   });
 }());
