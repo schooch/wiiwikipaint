@@ -2,37 +2,37 @@
   /*global desc, task, jake, fail, complete */
   "use strict";
 
+  var lint = require('./build/lint/lint_runner.js');
+  var reporter = require('nodeunit').reporters['default'];
+
   desc('Build and test');
   task('default', ['lint', 'test']);
 
-  desc('lint everything');
-  task('lint', [], function() {
-    var lint = require('./build/lint/lint_runner.js');
+  // Linting
+  desc('Lint everything');
+  task('lint', ['lintNode', 'lintClient']);
 
-    var files = new jake.FileList();
-    files.include('**/*.js');
-    files.exclude('node_modules');
-    files.exclude('karma.conf.js');
-
-    var passed = lint.validateFileList(files.toArray(), nodeLintOptions(), {});
-    if(!passed) fail('Lint failed');
+  desc('lint node');
+  task('lintNode', [], function() {
+    var passed = lint.validateFileList(nodeFiles(), nodeLintOptions(), {});
+    if(!passed) fail('Node lint failed');
   });
 
+  desc('lint client');
+  task('lintClient', [], function() {
+    var passed = lint.validateFileList(clientFiles(), browserLintOptions(), {});
+    if(!passed) fail('Client lint failed');
+  });
+
+  // Testing
   desc('Test everything');
-  task('test', ['testServer', 'testClient']);
+  task('test', ['testNode', 'testClient']);
 
-  desc('Test server code');
-  task('testServer', [], function(){
-    var files = new jake.FileList();
-    files.include('**/_*_test.js');
-    files.exclude('_release_test.js');
-    files.exclude('./src/client/*_*test.js');
-    files.exclude('node_modules');
-
-    var reporter = require('nodeunit').reporters['default'];
-    reporter.run(files.toArray(), null, function(failures){
+  desc('Test node code');
+  task('testNode', [], function(){
+    reporter.run(nodeTestFiles(), null, function(failures){
       if(failures){
-        fail('tests failed');
+        fail('testServer failed');
       }else{
         complete();
       }
@@ -41,8 +41,21 @@
 
   desc('Test client code');
   task('testClient', [], function(){
-    console.log('client side code here');
+    var config = {
+      port:8080
+    };
+    require('karma/lib/runner').run(config, function(failures){
+      if(failures){
+        fail('testClient failed');
+      }else{
+        complete();
+      }
+    }, function(output){
+      console.log('hello');
+      console.log(output);
+    });
   }, {async: true});
+
 
   desc('integrate');
   task('integrate', ['default'], function(){
@@ -64,8 +77,49 @@
     console.log('3. jake release test');
   });
 
+  function nodeFiles(){
+    var files = new jake.FileList();
+
+    files.include('**/*.js');
+    files.exclude('node_modules');
+    files.exclude('karma.conf.js');
+    files.exclude('src/client/**');
+
+    return files.toArray();
+  }
+
+  function nodeTestFiles(){
+    var files = new jake.FileList();
+
+    files.include('**/_*_test.js');
+    files.exclude('node_modules');
+    files.exclude('karma.conf.js');
+    files.exclude('src/client/**');
+
+    return files.toArray();
+  }
+
+  function clientFiles(){
+    var files = new jake.FileList();
+    files.include('src/client/**/*.js');
+
+    return files.toArray();
+  }
+
   function nodeLintOptions(){
-    return {
+    var options = globalLintOptions();
+    options.node = true;
+    return options;
+  }
+
+  function browserLintOptions(){
+    var options = globalLintOptions();
+    options.browser = true;
+    return options;
+  }
+
+  function globalLintOptions(){
+    var options = {
       bitwise: true,
       curly: false,
       eqeqeq: true,
@@ -80,7 +134,9 @@
       undef: true,
       strict: true,
       trailing: true,
-      node: true
+      browser: true
     };
+
+    return options;
   }
 }());
