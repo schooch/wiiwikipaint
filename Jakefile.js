@@ -56,7 +56,7 @@
   task('testClient', [], function(){
     var stdout = new CapturedStdout();
     var config = {
-      configFile: path.resolve('karma.conf.js')
+      configFile: path.resolve('build/karma.conf.js')
     };
 
     runner.run(config, function(exitCode){
@@ -119,10 +119,9 @@
   function nodeFiles(){
     var files = new jake.FileList();
 
-    files.include('**/*.js');
-    files.exclude('node_modules');
-    files.exclude('karma.conf.js');
-    files.exclude('src/client/**');
+    files.include('*.js');
+    files.include('src/server/**/*.js');
+    files.include('src/_smoke_test.js');
 
     return files.toArray();
   }
@@ -130,10 +129,8 @@
   function nodeTestFiles(){
     var files = new jake.FileList();
 
-    files.include('**/_*_test.js');
-    files.exclude('node_modules');
-    files.exclude('karma.conf.js');
-    files.exclude('src/client/**');
+    files.include('src/server/**/_*_test.js');
+    files.include('src/_*_test.js');
 
     return files.toArray();
   }
