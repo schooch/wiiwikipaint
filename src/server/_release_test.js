@@ -16,7 +16,8 @@
 
   exports.test_isOnWeb = function(test){
     httpGet('http://wiiwikipaint.herokuapp.com/', function(response, receivedData){
-      var foundHomePage = receivedData.indexOf('wiiwikipaint home page') !== -1;
+      var foundHomePage = receivedData.indexOf('WeeWikiPaint home page') !== -1;
+
       test.ok(foundHomePage, 'Home page should have contained wiiwikipaint marker');
       test.done();
     });

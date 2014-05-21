@@ -1,9 +1,19 @@
 (function() {
-  /*global desc, task, jake, fail, complete */
+  /*global desc, task, jake, fail, complete, path*/
   "use strict";
 
+  var path = require('path');
   var lint = require('./build/lint/lint_runner.js');
+  var runner = require('karma').runner;
   var reporter = require('nodeunit').reporters['default'];
+
+  var REQUIRED_BROWSERS = [
+    "IE 8.0.0 (Windows Vista)",
+    "Firefox 27.0.0 (Mac OS X 10.9)",
+    "Chrome 34.0.1847 (Mac OS X 10.9.2)",
+    "Safari 7.0.3 (Mac OS X 10.9.2)",
+    "Mobile Safari 7.0.0 (iOS 7.0.3)"  // iOS
+  ];
 
   desc('Build and test');
   task('default', ['lint', 'test']);
@@ -41,18 +51,19 @@
 
   desc('Test client code');
   task('testClient', [], function(){
+    var stdout = new CapturedStdout();
     var config = {
-      port:8080
+      configFile: path.resolve('karma.conf.js')
     };
-    require('karma/lib/runner').run(config, function(failures){
-      if(failures){
-        fail('testClient failed');
-      }else{
-        complete();
-      }
-    }, function(output){
-      console.log('hello');
-      console.log(output);
+
+    runner.run(config, function(exitCode){
+      if(exitCode) fail('testClient failed');
+     
+      var browserMissing = checkRequiredBrowsers(REQUIRED_BROWSERS, stdout);
+      if (browserMissing) fail('Did not test all the required browsers');
+      if (stdout.capturedOutput.indexOf("TOTAL: 0 SUCCESS") !== -1) fail("No tests were run!");
+      
+      complete();
     });
   }, {async: true});
 
@@ -76,6 +87,31 @@
     console.log('2. git push heroku master');
     console.log('3. jake release test');
   });
+
+  function checkRequiredBrowsers(requiredBrowsers, stdout) {
+    var browserMissing = false;
+    requiredBrowsers.forEach(function(browser) {
+      browserMissing = lookForBrowser(browser, stdout.capturedOutput) || browserMissing;
+    });
+    return browserMissing;
+  }
+
+  function lookForBrowser(browser, output) {
+    var missing = output.indexOf(browser + ": Executed") === -1;
+    if (missing) console.log(browser + " was not tested!");
+    return missing;
+  }
+
+  function CapturedStdout() {
+    var self = this;
+    self.oldStdout = process.stdout.write;
+    self.capturedOutput = "";
+
+    process.stdout.write = function(data) {
+      self.capturedOutput += data;
+      self.oldStdout.apply(this, arguments);
+    };
+  }
 
   function nodeFiles(){
     var files = new jake.FileList();
