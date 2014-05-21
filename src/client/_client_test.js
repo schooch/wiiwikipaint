@@ -65,10 +65,10 @@
         var actualPath = element.attr().path;
         var expectedPath = 'M'+startX+','+startY+'L'+finishX+','+finishY;
 
-        if(type === 'svg'){
+        if(Raphael.svg){
           // Browser support svg
           expect($.trim(actualPath)).to.equal(expectedPath);
-        }else if(type === 'vml'){
+        }else if(Raphael.vml){
           // Browser doesn't support svg (<=IE8)
           expect(actualPath).to.equal(expectedPath);
         }else{
