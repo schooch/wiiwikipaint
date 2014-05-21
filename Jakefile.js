@@ -17,7 +17,9 @@
   ];
 
   desc('Build and test');
-  task('default', ['lint', 'test']);
+  task('default', ['lint', 'test'], function(){
+    console.log('\n\nOK!');
+  });
 
   // Linting
   desc('Lint everything');
