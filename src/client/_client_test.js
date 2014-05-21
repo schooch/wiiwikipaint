@@ -1,4 +1,4 @@
-/*global desc, task, jake, fail, complete, chai, describe, it, dump */
+/*global desc, task, jake, fail, complete, chai, describe, it, dump, wwp */
 
 (function(){
   "use strict";
@@ -7,6 +7,8 @@
 
   describe('Nothing', function(){
     it('should run', function(){
+      wwwp.createElement();
+
 
       assert.equal('foo', 'foo');
 
