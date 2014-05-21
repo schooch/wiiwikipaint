@@ -6,7 +6,7 @@
   var width = 400;
   var height = 200;
   var paperId = 'wwp-drawing-area';
-  var drawingAreaDiv = '<div id="' +paperId+ '"></div>';
+  var drawingAreaDiv = '<div id="' +paperId+ '" style="border: solid 1px red;"></div>';
   var type;
 
   describe('Drawing area', function(){
@@ -16,16 +16,15 @@
       $(document.body).append(div);
 
       // Verify initalized correctly
-      wwp.inializeDrawingArea(div[0]);
+      wwp.initializeDrawingArea(div[0]);
 
       var tagName = $(div).children()[0].tagName.toLowerCase();
-      type = Raphael.type.toLowerCase();
 
       // verify initialized corretly
-      if(type === 'svg'){
+      if(Raphael.svg){
         // Browser support svg
         expect(tagName).to.equal('svg');
-      }else if(type === 'vml'){
+      }else if(Raphael.vml){
         // Browser doesn't support svg (<=IE8)
         expect(tagName).to.equal('div');
       }else{
@@ -42,7 +41,7 @@
       // Initialize div
 
       // Verify initalized correctly
-      var paper = wwp.inializeDrawingArea(div[0], width, height);
+      var paper = wwp.initializeDrawingArea(div[0], width, height);
       expect(paper.width).to.equal(width);
       expect(paper.height).to.equal(height);
     });
@@ -51,7 +50,7 @@
       var div = $(drawingAreaDiv);
       $(document.body).append(div);
 
-      var paper = wwp.inializeDrawingArea(div[0]);
+      var paper = wwp.initializeDrawingArea(div[0]);
       var startX = 20;
       var startY = 30;
       var finishX = 30;
