@@ -54,7 +54,7 @@
   task('testClient', [], function(){
     var stdout = new CapturedStdout();
     var config = {
-      configFile: path.resolve('build/karma.conf.js')
+      configFile: path.resolve('karma.conf.js')
     };
 
     runner.run(config, function(exitCode){

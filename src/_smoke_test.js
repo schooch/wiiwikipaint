@@ -13,6 +13,7 @@
   var http = require('http');
   var fs = require('fs');
   var child;
+  var PORT = 9876;
 
   exports.setUp = function(done){
     runServer(done);
