@@ -12,6 +12,9 @@
       div.setAttribute('class', 'bar');
       document.body.appendChild(div);
       //assert.equal('foo', 'foo');
+
+      var extractedDiv = document.getElementById('hello');
+      assert.equal(extractedDiv.getAttribute('class'), 'bar');
     });
   });
 }());
