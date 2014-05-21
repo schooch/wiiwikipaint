@@ -15,8 +15,10 @@ module.exports = function(config) {
 
     // list of files / patterns to load in the browser
     files: [
-      'node_modules/chai/chai.js',
-      'vendor_client/jquery.min.js',
+      //'node_modules/chai/chai.js',
+      'node_modules/expect.js/index.js',
+      'vendor_client/jquery.1.10.2.min.js',
+      'vendor_client/raphael.2.1.2.js',
       'src/client/*.js'
     ],
 
