@@ -72,13 +72,19 @@
       expect(paperPath()).to.eql([ [x, y, x2, y2] ]);
     });
 
-    it('draws line segments in response to clicks', function(){
+    it('draws multiple line segments in response to clicks', function(){
       mouseDown(x, y);
       mouseMove(x2, y2);
       mouseMove(x3, y3);
-      mouseUp(x,y);
 
       expect(paperPath()).to.eql([ [x, y, x2, y2], [x2, y2, x3, y3] ]);
+    });
+
+    it('does not draw a line when mouse is not moved', function(){
+      mouseDown(x, y);
+      mouseUp(x, y);
+
+      expect(paperPath()).to.eql([ ]);
     });
 
     function mouseDown(clickX, clickY){

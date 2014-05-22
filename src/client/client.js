@@ -7,8 +7,8 @@ wwp = {};
   var paper;
 
   wwp.initializeDrawingArea = function(drawingAreaElement, width, height){
-    var startX = null;
-    var startY = null;
+    var start = null;
+    var end = null;
     var isDragging = false;
     var jqArea = $(drawingAreaElement);
     var divPageX = jqArea.offset().left;
@@ -20,9 +20,7 @@ wwp = {};
 
     $(document).mousedown(function(event){
       isDragging = true;
-
-      startX = event.pageX - pageOffset.left;
-      startY = event.pageY - pageOffset.top;
+      start = relativeOffset(drawingArea, event.pageX, event.pageY);
     });
 
     $(document).mouseup(function(event){
@@ -30,48 +28,27 @@ wwp = {};
     });
     
     drawingArea.mousemove(function(event) {
-      var endX = event.pageX - pageOffset.left;
-      var endY = event.pageY - pageOffset.top;
+      if (start === null) return;
 
-      if (startX !== null && isDragging) wwp.drawLine(startX, startY, endX, endY);
-
-      startX = endX;
-      startY = endY;
+      var end = relativeOffset(drawingArea, event.pageX, event.pageY);
+      if (isDragging) wwp.drawLine(start.x, start.y, end.x, end.y);
+      start = end;
     });
 
-    // jqArea.mousedown(function(){
-    //   isDragging = true;
-    // });
-
-    // jqArea.mouseup(function(){
-    //   isDragging = false;
-    // });
-
-    // jqArea.mouseleave(function(){
-    //   isDragging = false;
-    // });
-
-    // jqArea.mouseenter(function(e){
-    //   if(e.which === 1){
-    //     isDragging = true;
-    //   }
-    // });
-
-    // jqArea.mousemove(function(){
-    //   var relativeX = event.pageX - divPageX;
-    //   var relativeY = event.pageY - divPageY;
-
-    //   if(prevX !== null && isDragging) wwp.drawLine(prevX, prevY, relativeX, relativeY);
-
-    //   prevX = relativeX;
-    //   prevY = relativeY;
-    // });
-    
     return paper;
   };
 
   wwp.drawLine = function(startX, startY, finishX, finishY){
     paper.path('M'+startX+','+startY+'L'+finishX+','+finishY);
   };
+
+  function relativeOffset(element, absoluteX, absoluteY){
+    var pageOffset = element.offset();
+
+    return{
+      x: absoluteX - pageOffset.left,
+      y: absoluteY - pageOffset.top
+    };
+  }
     
 }());
