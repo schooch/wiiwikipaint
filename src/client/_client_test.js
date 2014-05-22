@@ -65,6 +65,13 @@
       expect(paperPath()).to.eql([]);
     });
 
+    it('draws a line in response to mouse drag', function(){
+      mouseDown(x, y);
+      mouseMove(x2, y2);
+
+      expect(paperPath()).to.eql([ [x2, y2, x3, y3] ]);
+    });
+
     it('draws line segments in response to clicks', function(){
       mouseDown(x, y);
       mouseMove(x2, y2);
