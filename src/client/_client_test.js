@@ -5,6 +5,12 @@
 
   var width = 400;
   var height = 400;
+  var x = 20;
+  var y = 30;
+  var x2 = 70;
+  var y2 = 80;
+  var x3 = 340;
+  var y3 = 350;
   var paperId = 'wwp-drawing-area';
   var drawingAreaDiv = '<div id="' +paperId+ '" style="border: solid 1px red;"></div>';
   var type;
@@ -47,58 +53,100 @@
     });
 
     it('should draw a line', function(){
-      var x = 20;
-      var y = 30;
-      var x2 = 30;
-      var y2 = 300;
-
       wwp.drawLine(x,y,x2,y2);
-
-      paper.forEach(function(element){
-        var expectedPath = 'M'+x+','+y+'L'+x2+','+y2;
-        expect(checkPath(element)).to.equal(expectedPath);
-      });
+  
+      expect(paperPath()).to.eql([[x,y,x2,y2]]);
     });
 
     it('draws line segments in response to clicks', function(){
-      var x = 0;
-      var y = 0;
-      var x2 = 30;
-      var y2 = 300;
-
       clickMouse(x, y);
       clickMouse(x2, y2);
+      clickMouse(x3, y3);
 
-      var position = relativePosition(x2, y2);
-      
-      paper.forEach(function(element){
-        var expectedPath = 'M'+x+','+y+'L'+position.x+','+position.y;
-        expect(checkPath(element)).to.equal(expectedPath);
-      });
+      expect(paperPath()).to.eql([ [x, y, x2, y2], [x2, y2, x3, y3] ]);
     });
 
-    function clickMouse(x2, y2){
+    function clickMouse(clickX, clickY){
+      var topLeftOfDrawingArea = drawingArea.offset();
+      var x = clickX + topLeftOfDrawingArea.left;
+      var y = clickY + topLeftOfDrawingArea.top;
+
       var eventData = new jQuery.Event('click');
-      eventData.pageX = x2;
-      eventData.pageY = y2;
+      eventData.pageX = x;
+      eventData.pageY = y;
 
       drawingArea.trigger(eventData);
     }
 
-    function relativePosition(x2, y2){
-      // click inside drawing area
-      var topLeftOfDrawingArea = drawingArea.offset();
-      var expectedX = x2 - topLeftOfDrawingArea.left;
-      var expectedY = y2 - topLeftOfDrawingArea.top;
+    function paperPath(){
+      var box;
+      var result = [];
 
-      return {x: expectedX, y:expectedY};
+      for (var i = 0; i < drawingElements().length; i++) {
+        box = pathFor(drawingElements()[i]);
+        result.push([ box.x, box.y, box.x2, box.y2 ]);
+      }
+
+      return result;
     }
 
-    function checkPath(element){
-      var box = element.getBBox();
+    function drawingElements() {
+      var result = [];
 
-      return 'M'+box.x+','+box.y+'L'+box.x2+','+box.y2;
+      paper.forEach(function(element) {
+        result.push(element);
+      });
+      return result;
     }
+
+    function pathFor(element) {
+      if (Raphael.vml) return vmlPathFor(element);
+      if (Raphael.svg) return svgPathFor(element);
+      else throw new Error("Unknown Raphael type");
+    }
+
+    function svgPathFor(element) {
+      var pathRegex;
+
+      var path = element.node.attributes.d.value;
+      if (path.indexOf(",") !== -1)
+        // We're in Firefox, Safari, Chrome, which uses format "M20,30L30,300"
+        pathRegex = /M(\d+),(\d+)L(\d+),(\d+)/;
+      else {
+        // We're in IE9, which uses format "M 20 30 L 30 300"
+        pathRegex = /M (\d+) (\d+) L (\d+) (\d+)/;
+      }
+      var pathComponents = path.match(pathRegex);
+      return {
+        x: pathComponents[1],
+        y: pathComponents[2],
+        x2: pathComponents[3],
+        y2: pathComponents[4]
+      };
+    }
+
+    function vmlPathFor(element) {
+      // We're in IE 8, which uses format "m432000,648000 l648000,67456800 e"
+      var VML_MAGIC_NUMBER = 21600;
+
+      var path = element.node.path.value;
+
+      var ie8PathRegex = /m(\d+),(\d+) l(\d+),(\d+) e/;
+      var ie8 = path.match(ie8PathRegex);
+
+      var startX = ie8[1] / VML_MAGIC_NUMBER;
+      var startY = ie8[2] / VML_MAGIC_NUMBER;
+      var endX = ie8[3] / VML_MAGIC_NUMBER;
+      var endY = ie8[4] / VML_MAGIC_NUMBER;
+
+      return {
+        x: startX,
+        y: startY,
+        x2: endX,
+        y2: endY
+      };
+    }
+
 
   });
 }());
