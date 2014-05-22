@@ -59,19 +59,43 @@
     });
 
     it('draws line segments in response to clicks', function(){
-      clickMouse(x, y);
-      clickMouse(x2, y2);
-      clickMouse(x3, y3);
+      mouseDown(x, y);
+      mouseMove(x2, y2);
+      mouseUp(x3, y3);
 
       expect(paperPath()).to.eql([ [x, y, x2, y2], [x2, y2, x3, y3] ]);
     });
 
-    function clickMouse(clickX, clickY){
+    function mouseDown(clickX, clickY){
       var topLeftOfDrawingArea = drawingArea.offset();
       var x = clickX + topLeftOfDrawingArea.left;
       var y = clickY + topLeftOfDrawingArea.top;
 
-      var eventData = new jQuery.Event('click');
+      var eventData = new jQuery.Event('mousedown');
+      eventData.pageX = x;
+      eventData.pageY = y;
+
+      drawingArea.trigger(eventData);
+    }
+
+    function mouseMove(clickX, clickY){
+      var topLeftOfDrawingArea = drawingArea.offset();
+      var x = clickX + topLeftOfDrawingArea.left;
+      var y = clickY + topLeftOfDrawingArea.top;
+
+      var eventData = new jQuery.Event('mousemove');
+      eventData.pageX = x;
+      eventData.pageY = y;
+
+      drawingArea.trigger(eventData);
+    }
+
+    function mouseUp(clickX, clickY){
+      var topLeftOfDrawingArea = drawingArea.offset();
+      var x = clickX + topLeftOfDrawingArea.left;
+      var y = clickY + topLeftOfDrawingArea.top;
+
+      var eventData = new jQuery.Event('mouseup');
       eventData.pageX = x;
       eventData.pageY = y;
 
