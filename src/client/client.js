@@ -13,21 +13,23 @@ wwp = {};
     var jqArea = $(drawingAreaElement);
     var divPageX = jqArea.offset().left;
     var divPageY = jqArea.offset().top;
+    var drawingArea = $(drawingAreaElement);
+    var pageOffset = drawingArea.offset();
 
     paper = new Raphael(drawingAreaElement, width, height);
 
     $(document).mousedown(function(event){
       isDragging = true;
+
+      startX = event.pageX - pageOffset.left;
+      startY = event.pageY - pageOffset.top;
     });
 
     $(document).mouseup(function(event){
       isDragging = false;
     });
-
-    var drawingArea = $(drawingAreaElement);
+    
     drawingArea.mousemove(function(event) {
-      var pageOffset = drawingArea.offset();
-
       var endX = event.pageX - pageOffset.left;
       var endY = event.pageY - pageOffset.top;
 

@@ -69,7 +69,7 @@
       mouseDown(x, y);
       mouseMove(x2, y2);
 
-      expect(paperPath()).to.eql([ [x2, y2, x3, y3] ]);
+      expect(paperPath()).to.eql([ [x, y, x2, y2] ]);
     });
 
     it('draws line segments in response to clicks', function(){
@@ -78,7 +78,7 @@
       mouseMove(x3, y3);
       mouseUp(x,y);
 
-      expect(paperPath()).to.eql([ [x2, y2, x3, y3] ]);
+      expect(paperPath()).to.eql([ [x, y, x2, y2], [x2, y2, x3, y3] ]);
     });
 
     function mouseDown(clickX, clickY){
