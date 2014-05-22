@@ -16,14 +16,22 @@ wwp = {};
 
     paper = new Raphael(drawingAreaElement, width, height);
 
+    $(document).mousedown(function(event){
+      isDragging = true;
+    });
+
+    $(document).mouseup(function(event){
+      isDragging = false;
+    });
+
     var drawingArea = $(drawingAreaElement);
-    drawingArea.click(function(event) {
+    drawingArea.mousemove(function(event) {
       var pageOffset = drawingArea.offset();
 
       var endX = event.pageX - pageOffset.left;
       var endY = event.pageY - pageOffset.top;
 
-      if (startX !== null) wwp.drawLine(startX, startY, endX, endY);
+      if (startX !== null && isDragging) wwp.drawLine(startX, startY, endX, endY);
 
       startX = endX;
       startY = endY;
