@@ -59,6 +59,9 @@
       wwp.drawLine(startX,startY,finishX,finishY);
 
       paper.forEach(function(element){
+
+        dump(JSON.stringify(element.getBBox()));
+
         var type = Raphael.type.toLowerCase();
         var actualPath = element.attr().path;
         var expectedPath = 'M'+startX+','+startY+'L'+finishX+','+finishY;
