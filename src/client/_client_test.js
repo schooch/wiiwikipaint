@@ -66,7 +66,9 @@
       var x2 = 30;
       var y2 = 300;
 
+      clickMouse(x, y);
       clickMouse(x2, y2);
+
       var position = relativePosition(x2, y2);
       
       paper.forEach(function(element){
