@@ -13,7 +13,7 @@
   var http = require('http');
   var fs = require('fs');
   var child;
-  var PORT = 9876;
+  var PORT = 5000;
 
   exports.setUp = function(done){
     runServer(done);
@@ -27,7 +27,7 @@
   };
 
   exports.test_canGetHomePage = function(test){
-    httpGet('http://localhost:5000', function(response, receivedData){
+    httpGet('http://localhost:'+PORT, function(response, receivedData){
       var foundHomePage = receivedData.indexOf('wiiwikipaint home page') !== 1;
       test.ok(foundHomePage, 'Home page should have contained wiiwikipaint marker');
       test.done();
@@ -35,7 +35,7 @@
   };
 
   exports.test_canGet404Page = function(test){
-     httpGet('http://localhost:5000/nonexistantpage', function(response, receivedData){
+     httpGet('http://localhost:'+PORT+'/nonexistantpage', function(response, receivedData){
       var foundHomePage = receivedData.indexOf('wiiwikipaint 404 page') !== 1;
       test.ok(foundHomePage, 'Home page should contain 404 marker');
       test.done();
@@ -58,7 +58,7 @@
     var parsed = procfile.parse(file).web;
 
     parsed.options = parsed.options.map(function(element){
-      if (element === '$PORT') return '5000';
+      if (element === '$PORT') return PORT;
       else return element;
     });
 

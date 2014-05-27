@@ -1,7 +1,7 @@
 (function(){
   'use strict';
 
-  var CONTENT_DIR = 'src/server/content';
+  var CONTENT_DIR = 'src/client';
 
   var server = require('./server.js');
   var port = process.argv[2];

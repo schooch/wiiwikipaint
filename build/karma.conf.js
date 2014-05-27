@@ -17,8 +17,8 @@ module.exports = function(config) {
     files: [
       //'node_modules/chai/chai.js',
       'node_modules/expect.js/index.js',
-      'vendor_client/jquery.1.10.2.min.js',
-      'vendor_client/raphael.2.1.2.js',
+      'src/client/vendor/jquery.1.10.2.min.js',
+      'src/client/vendor/raphael.2.1.2.js',
       'src/client/*.js'
     ],
 
