@@ -11,11 +11,13 @@
   var y2 = 80;
   var x3 = 340;
   var y3 = 350;
+  var outsideX = 800;
+  var outsideY = 800;
   var paperId = 'wwp-drawing-area';
   var drawingAreaDiv = '<div id="' +paperId+ '" style="border: solid 1px red;"></div>';
   var type;
 
-  describe('Drawing area', function(){
+  describe('Drawing area: ', function(){
     var drawingArea;
     var paper;
 
@@ -29,6 +31,7 @@
 
     afterEach(function(){
       drawingArea.remove();
+      $(document).unbind();
     });
 
     it('should be initialized in pre-defined div', function(){
@@ -52,95 +55,102 @@
       expect(paper.height).to.equal(height);
     });
 
-    it('should draw a line', function(){
-      wwp.drawLine(x,y,x2,y2);
-  
-      expect(paperPath()).to.eql([[x,y,x2,y2]]);
-    });
-
     it('does not draw segments when mouse is not down', function(){
-      mouseMove(x, y);
-      mouseMove(x2, y2);
+      mouseEvent('mousemove', x, y);
+      mouseEvent('mousemove', x2, y2);
 
-      expect(paperPath()).to.eql([]);
+      expect(lineSegments()).to.eql([]);
     });
 
     it('draws a line in response to mouse drag', function(){
-      mouseDown(x, y);
-      mouseMove(x2, y2);
+      mouseEvent('mousedown', x, y);
+      mouseEvent('mousemove', x2, y2);
 
-      expect(paperPath()).to.eql([ [x, y, x2, y2] ]);
+      expect(lineSegments()).to.eql([ [x, y, x2, y2] ]);
     });
 
     it('draws multiple line segments in response to clicks', function(){
-      mouseDown(x, y);
-      mouseMove(x2, y2);
-      mouseMove(x3, y3);
+      mouseEvent('mousedown', x, y);
+      mouseEvent('mousemove', x2, y2);
+      mouseEvent('mousemove', x3, y3);
 
-      expect(paperPath()).to.eql([ [x, y, x2, y2], [x2, y2, x3, y3] ]);
+      expect(lineSegments()).to.eql([ [x, y, x2, y2], [x2, y2, x3, y3] ]);
     });
 
     it('does not draw a line when mouse is not moved', function(){
-      mouseDown(x, y);
-      mouseUp(x, y);
+      mouseEvent('mousedown', x, y);
+      mouseEvent('mouseup', x, y);
 
-      expect(paperPath()).to.eql([ ]);
+      expect(lineSegments()).to.eql([ ]);
     });
 
-    function mouseDown(clickX, clickY){
-      var topLeftOfDrawingArea = drawingArea.offset();
-      var x = clickX + topLeftOfDrawingArea.left;
-      var y = clickY + topLeftOfDrawingArea.top;
+    it('stops drawing when mouse leaves drawing area', function(){
+      mouseEvent('mousedown', x, y);
+      mouseEvent('mouseleave', outsideX, outsideY);
+      mouseEvent('mousemove', x2, x2);
 
-      var eventData = new jQuery.Event('mousedown');
-      eventData.pageX = x;
-      eventData.pageY = y;
+      expect(lineSegments()).to.eql([ ]);
+    });
 
-      drawingArea.trigger(eventData);
-    }
+    it('does not start drawing if drag is started outside drawing area', function(){
+      // Top
+      mouseEvent('mousedown', 200, -1, $(document));
+      mouseEvent('mousemove', x, y);
+      // Right
+      mouseEvent('mousedown', 401, 200, $(document));
+      mouseEvent('mousemove', x, y);
+      // Bottom
+      mouseEvent('mousedown', 200, 401, $(document));
+      mouseEvent('mousemove', x, y);
+      // Left
+      mouseEvent('mousedown', -1, 200, $(document));
+      mouseEvent('mousemove', x, y);
 
-    function mouseMove(clickX, clickY){
-      var topLeftOfDrawingArea = drawingArea.offset();
-      var x = clickX + topLeftOfDrawingArea.left;
-      var y = clickY + topLeftOfDrawingArea.top;
+      expect(lineSegments()).to.eql([ ]);
+    });
 
-      var eventData = new jQuery.Event('mousemove');
-      eventData.pageX = x;
-      eventData.pageY = y;
-
-      drawingArea.trigger(eventData);
-    }
-
-    function mouseUp(clickX, clickY){
-      var topLeftOfDrawingArea = drawingArea.offset();
-      var x = clickX + topLeftOfDrawingArea.left;
-      var y = clickY + topLeftOfDrawingArea.top;
-
-      var eventData = new jQuery.Event('mouseup');
-      eventData.pageX = x;
-      eventData.pageY = y;
-
-      drawingArea.trigger(eventData);
-    }
-
-    function paperPath(){
-      var box;
-      var result = [];
-
-      for (var i = 0; i < drawingElements().length; i++) {
-        box = pathFor(drawingElements()[i]);
-        result.push([ box.x, box.y, box.x2, box.y2 ]);
-      }
-
-      return result;
-    }
-
-    function drawingElements() {
-      var result = [];
-
-      paper.forEach(function(element) {
-        result.push(element);
+    it('does not allow elements (like text) to be selected when dragging outside drawing area', function(){
+      drawingArea.mousedown(function(event){
+        expect(event.isDefaultPrevented()).to.be(true);
       });
+      mouseEvent('mousedown',x, y);
+    });
+
+    it('does not allow text to be selected outside drawing area -- Including ie8', function(){
+      drawingArea.on('selectstart', function(event){
+        expect(event.isDefaultPrevented()).to.be(true);
+      });
+      mouseEvent('selectstart',x, y);
+    });
+
+    function relativeOffset(relativeX, relativeY){
+      var topLeftOfDrawingArea = drawingArea.offset();
+      return {
+        x : relativeX + topLeftOfDrawingArea.left,
+        y : relativeY + topLeftOfDrawingArea.top
+      };
+    }
+
+    function mouseEvent(event, clickX, clickY, optionalElement){
+      var jqElement = optionalElement || drawingArea;
+
+      var relativePosition = relativeOffset(clickX, clickY);
+
+      var eventData = new jQuery.Event(event);
+      eventData.pageX = relativePosition.x;
+      eventData.pageY = relativePosition.y;
+
+      jqElement.trigger(eventData);
+    }
+
+    function lineSegments(){
+      var result = [];
+
+      paper.forEach(function(element){
+        var path = pathFor(element);
+        result.push([ path.x, path.y, path.x2, path.y2 ]);
+      });
+
       return result;
     }
 

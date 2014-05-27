@@ -1,4 +1,4 @@
-/*global dump, Raphael, wwp:true, $ */
+/*global dump, Raphael, wwp:true, $, Event */
 
 wwp = {};
 
@@ -9,40 +9,48 @@ wwp = {};
   wwp.initializeDrawingArea = function(drawingAreaElement, width, height){
     paper = new Raphael(drawingAreaElement, width, height);
     handleDragEvents(drawingAreaElement);
+    drawingAreaElement.onselectstart = function(event){
+      return false;
+    };
     return paper;
   };
 
   function handleDragEvents(drawingAreaElement){
     var start = null;
-    var end = null;
-    var isDragging = false;
-    var jqArea = $(drawingAreaElement);
-    var divPageX = jqArea.offset().left;
-    var divPageY = jqArea.offset().top;
     var drawingArea = $(drawingAreaElement);
-    var pageOffset = drawingArea.offset();
 
-    $(document).mousedown(function(event){
-      isDragging = true;
-      start = relativeOffset(drawingArea, event.pageX, event.pageY);
+    drawingArea.mousedown(function(event){
+      event.preventDefault();
+
+      // Do not draw if click event was outside drawing area
+      var offset = relativeOffset(drawingArea, event.pageX, event.pageY);
+      start = offset;
     });
 
-    $(document).mouseup(function(event){
-      isDragging = false;
+    drawingArea.on('selectstart', function(event){
+      event.preventDefault();
     });
-    
+
     drawingArea.mousemove(function(event) {
-      if (start === null) return;
+      if(start === null) return;
 
       var end = relativeOffset(drawingArea, event.pageX, event.pageY);
-      if (isDragging) wwp.drawLine(start.x, start.y, end.x, end.y);
+      drawLine(start.x, start.y, end.x, end.y);
       start = end;
     });
+
+    drawingArea.mouseup(function(event){
+      start = null;
+    });
+
+    drawingArea.mouseleave(function(event){
+      start = null;
+    }); 
   }
 
-  wwp.drawLine = function(startX, startY, finishX, finishY){
+  function drawLine(startX, startY, finishX, finishY){
     paper.path('M'+startX+','+startY+'L'+finishX+','+finishY);
-  };
+  }
 
   function relativeOffset(element, absoluteX, absoluteY){
     var pageOffset = element.offset();
