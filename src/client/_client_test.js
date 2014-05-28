@@ -161,10 +161,10 @@
 
       var touchEvent = document.createEvent('TouchEvent');
       touchEvent.initTouchEvent(event, true, true);
+      touchEvent.pageX = relativePosition.x;
+      touchEvent.pageY = relativePosition.y;
 
       var eventData = new jQuery.Event(event);
-      eventData.pageX = relativePosition.x;
-      eventData.pageY = relativePosition.y;
       eventData.type = event;
       eventData.originalEvent = touchEvent;
 
