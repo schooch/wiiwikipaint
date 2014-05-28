@@ -46,6 +46,26 @@ wwp = {};
     drawingArea.mouseleave(function(event){
       start = null;
     }); 
+
+    drawingArea.on('touchstart', function(event){
+      event.preventDefault();
+
+      // Do not draw if click event was outside drawing area
+      var offset = relativeOffset(drawingArea, event.pageX, event.pageY);
+      start = offset;
+    });
+
+    drawingArea.on('touchmove', function(event) {
+      if(start === null) return;
+
+      var end = relativeOffset(drawingArea, event.pageX, event.pageY);
+      drawLine(start.x, start.y, end.x, end.y);
+      start = end;
+    });
+
+    drawingArea.on('touchend', function(event){
+      start = null;
+    });
   }
 
   function drawLine(startX, startY, finishX, finishY){

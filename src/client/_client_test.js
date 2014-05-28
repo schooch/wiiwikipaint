@@ -31,7 +31,6 @@
 
     afterEach(function(){
       drawingArea.remove();
-      $(document).unbind();
     });
 
     it('should be initialized in pre-defined div', function(){
@@ -123,6 +122,18 @@
       mouseEvent('selectstart',x, y);
     });
 
+    describe('touch events', function(){
+      it('draws lines in responds to touch events', function(){
+        if(!browserSupportsTouchEvents()) return;
+
+        touchEvents('touchstart', x, y);
+        touchEvents('touchmove', x2, y2);
+        touchEvents('touchend', x, y);
+
+        expect(lineSegments()).to.eql([ [x, y, x2, y2] ]);
+      });
+    });
+
     function relativeOffset(relativeX, relativeY){
       var topLeftOfDrawingArea = drawingArea.offset();
       return {
@@ -141,6 +152,27 @@
       eventData.pageY = relativePosition.y;
 
       jqElement.trigger(eventData);
+    }
+
+    function touchEvents(event, clickX, clickY, optionalElement){
+      var jqElement = optionalElement || drawingArea;
+
+      var relativePosition = relativeOffset(clickX, clickY);
+
+      var touchEvent = document.createEvent('TouchEvent');
+      touchEvent.initTouchEvent(event, true, true);
+
+      var eventData = new jQuery.Event(event);
+      eventData.pageX = relativePosition.x;
+      eventData.pageY = relativePosition.y;
+      eventData.type = event;
+      eventData.originalEvent = touchEvent;
+
+      jqElement.trigger(eventData);
+    }
+
+    function browserSupportsTouchEvents(){
+      return (typeof Touch !== 'undefined') && ('ontouchstart' in window);
     }
 
     function lineSegments(){
