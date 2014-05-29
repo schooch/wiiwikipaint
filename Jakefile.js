@@ -161,7 +161,7 @@
       eqeqeq: true,
       forin: true,
       immed: true,
-      latedef: true,
+      latedef: false,
       newcap: true,
       noarg: true,
       noempty: true,
