@@ -8,7 +8,7 @@
   var x = 20;
   var y = 30;
   var x2 = 70;
-  var y2 = 80;
+  var y2 = 300;
   var x3 = 340;
   var y3 = 350;
   var outsideX = 800;
